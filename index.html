@@ -11,7 +11,6 @@
         box-sizing: border-box;
         font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
     }
-
     body {
         background-color: #e0f7fa;
         display: flex;
@@ -20,7 +19,6 @@
         min-height: 100vh;
         padding: 24px;
     }
-
     h1 {
         font-size: 44px;
         font-weight: 900;
@@ -30,14 +28,12 @@
         text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.12);
         letter-spacing: 1px;
     }
-
     .subtitle {
         font-size: 20px;
         color: #01579b;
         margin-bottom: 24px;
         font-weight: bold;
     }
-
     .time-display {
         font-size: 22px;
         color: #01579b;
@@ -47,8 +43,8 @@
         border-radius: 40px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         font-weight: bold;
+        display:none;
     }
-
     .game-container {
         display: grid;
         grid-template-columns: repeat(6, 1fr);
@@ -57,8 +53,8 @@
         width: min(1100px, 96vw);
         aspect-ratio: 6 / 3;
         margin-bottom: 32px;
+        display:none;
     }
-
     .bubble {
         border-radius: 50%;
         display: flex;
@@ -80,7 +76,6 @@
         overflow: hidden;
         user-select: none;
     }
-
     .bubble::before {
         content: "";
         position: absolute;
@@ -93,11 +88,9 @@
         transform: rotate(-25deg);
         filter: blur(2px);
     }
-
     .bubble:hover {
         transform: scale(1.04);
     }
-
     .bubble.selected {
         transform: scale(1.08);
         box-shadow:
@@ -107,14 +100,12 @@
             0 0 28px 10px rgba(255, 255, 120, 0.55),
             0 14px 22px rgba(0, 0, 0, 0.22);
     }
-
     .bubble.hidden {
         opacity: 0;
         pointer-events: none;
         transform: scale(0.3);
         transition: all 0.45s ease;
     }
-
     .result {
         font-size: 34px;
         font-weight: 900;
@@ -127,7 +118,6 @@
         border-radius: 20px;
         box-shadow: 0 8px 20px rgba(0, 105, 92, 0.15);
     }
-
     .btn {
         padding: 16px 44px;
         font-size: 24px;
@@ -141,53 +131,65 @@
         transition: all 0.25s ease;
         display: none;
     }
-
     .btn:hover {
         background-color: #0288d1;
         transform: translateY(-3px);
         box-shadow: 0 10px 22px rgba(0, 0, 0, 0.22);
     }
-
     .btn:active {
         transform: translateY(1px);
     }
-
+    #startBtn{
+        padding:20px 60px;
+        font-size:28px;
+        font-weight:bold;
+        background:#0288d1;
+        color:white;
+        border:none;
+        border-radius:60px;
+        cursor:pointer;
+        box-shadow:0 6px 18px #00000022;
+        margin-top:60px;
+    }
+    #audioBox{
+        display:none;
+    }
     @media (max-width: 720px) {
         h1 {
             font-size: 30px;
         }
-
         .subtitle {
             font-size: 16px;
         }
-
         .bubble {
             font-size: 17px;
             padding: 6px;
         }
-
         .game-container {
             gap: 10px;
+        }
+        #startBtn{
+            font-size:22px;
+            padding:16px 40px;
         }
     }
 </style>
 </head>
 <body>
-
 <h1>汉字消消乐</h1>
 <div class="subtitle">Igra spajanja kineskih znakova</div>
+
+<button id="startBtn">🔊 点击开始游戏</button>
 
 <div class="time-display">
     Prošlo vrijeme: <span id="time">00:00</span>
 </div>
-
 <div class="game-container" id="gameContainer"></div>
-
 <div class="result" id="successMessage">
     Čestitam! Uspješno ste završili izazov!
 </div>
-
 <button class="btn" id="continueBtn">Nastavi izazov</button>
+<div id="audioBox"></div>
 
 <script>
     const wordLibrary = [
@@ -200,7 +202,7 @@
         { cn: "名字", hr: "ime", pinyin: "míngzi" },
         { cn: "叫", hr: "zvati se", pinyin: "jiào" },
         { cn: "妈妈", hr: "mama", pinyin: "māma" },
-        { cn: "爸爸", hr: "tata", pinyin: "bàba" },
+        { cn: "爸爸", hr: "tatko", pinyin: "bàba" },
         { cn: "一", hr: "jedan", pinyin: "yī" },
         { cn: "二", hr: "dva", pinyin: "èr" },
         { cn: "三", hr: "tri", pinyin: "sān" },
@@ -231,6 +233,48 @@
         { cn: "猪", hr: "svinja", pinyin: "zhū" }
     ];
 
+    const audioMap = {
+        "ti":"ti.mp3",
+        "ja":"ja.mp3",
+        "on":"on.mp3",
+        "ona":"ona.mp3",
+        "bok":"bok.mp3",
+        "doviđenja":"dovidenja.mp3",
+        "ime":"ime.mp3",
+        "zvati se":"zvati_se.mp3",
+        "mama":"mama.mp3",
+        "tatko":"tatko.mp3",
+        "jedan":"jedan.mp3",
+        "dva":"dva.mp3",
+        "tri":"tri.mp3",
+        "četiri":"cetiri.mp3",
+        "pet":"pet.mp3",
+        "šest":"sest.mp3",
+        "sedam":"sedam.mp3",
+        "osam":"osam.mp3",
+        "devet":"devet.mp3",
+        "deset":"deset.mp3",
+        "jabuka":"jabuka.mp3",
+        "jagoda":"jagoda.mp3",
+        "grožđe":"grozdje.mp3",
+        "banana":"banana.mp3",
+        "cvijeće":"cvijece.mp3",
+        "trešnja":"tresnja.mp3",
+        "štakor":"stakor.mp3",
+        "krava":"krava.mp3",
+        "tigar":"tigar.mp3",
+        "zec":"zec.mp3",
+        "zmaj":"zmaj.mp3",
+        "zmija":"zmija.mp3",
+        "konj":"konj.mp3",
+        "ovca":"ovca.mp3",
+        "majmun":"majmun.mp3",
+        "kokoš":"kokos.mp3",
+        "pas":"pas.mp3",
+        "svinja":"svinja.mp3"
+    };
+    const AUDIO_FOLDER = "./audio/";
+
     let usedWordIndices = [];
     let selectedBubbles = [];
     let gameStarted = false;
@@ -238,38 +282,69 @@
     let timerInterval;
     const pairsPerRound = 9;
     let remainingPairs = pairsPerRound;
+    let audioUnlocked = false;
 
     const gameContainer = document.getElementById("gameContainer");
     const successMessage = document.getElementById("successMessage");
     const continueBtn = document.getElementById("continueBtn");
     const timeDisplay = document.getElementById("time");
+    const audioBox = document.getElementById("audioBox");
+    const startBtn = document.getElementById("startBtn");
+
+    // 点击开始按钮，解锁移动端音频权限
+    startBtn.addEventListener('click', ()=>{
+        audioUnlocked = true;
+        // 空音频，触发浏览器解锁音频上下文
+        const tempAudio = new Audio();
+        tempAudio.play().catch(()=>{});
+        // 隐藏开始按钮，显示游戏界面
+        startBtn.style.display = 'none';
+        timeDisplay.style.display = 'block';
+        gameContainer.style.display = 'grid';
+        generateBubbles();
+    });
+
+    function playHrAudio(hrText){
+        if(!audioUnlocked) return;
+        const filename = audioMap[hrText];
+        if(!filename){
+            console.warn("缺少音频映射：",hrText);
+            return;
+        }
+        audioBox.innerHTML="";
+        const audio = document.createElement('audio');
+        audio.src = AUDIO_FOLDER + filename;
+        audio.volume = 1;
+        audioBox.appendChild(audio);
+        audio.play().catch(err=>{
+            console.log("播放mp3失败：",err);
+        });
+    }
+
+    function speakZh(text) {
+        if (!('speechSynthesis' in window) || !audioUnlocked) return;
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "zh-CN";
+        utterance.volume = 1;
+        utterance.rate = 0.9;
+        utterance.pitch = 1;
+        window.speechSynthesis.speak(utterance);
+    }
 
     function getRandomColor() {
         const hue = Math.floor(Math.random() * 360);
         return `hsl(${hue}, 72%, 58%)`;
     }
 
-    function speakText(text, lang = "zh-CN") {
-        if ("speechSynthesis" in window) {
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = lang;
-            utterance.volume = 1;
-            utterance.rate = 0.9;
-            utterance.pitch = 1;
-            window.speechSynthesis.speak(utterance);
-        }
-    }
-
     function playSound(type) {
+        if(!audioUnlocked) return;
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         const audioContext = new AudioContext();
         const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
-
         oscillator.connect(gainNode);
         gainNode.connect(audioContext.destination);
-
         if (type === "success") {
             oscillator.type = "sine";
             oscillator.frequency.setValueAtTime(880, audioContext.currentTime);
@@ -313,32 +388,27 @@
 
     function selectBubble(bubble, data) {
         startTimer();
-
         if (selectedBubbles.length >= 2 || bubble.classList.contains("selected")) {
             return;
         }
-
         bubble.classList.add("selected");
         selectedBubbles.push({ element: bubble, data: data });
 
         if (data.type === "cn") {
-            speakText(data.text, "zh-CN");
+            speakZh(data.text);
         } else {
-            speakText(data.text, "hr-HR");
+            playHrAudio(data.text);
         }
 
         if (selectedBubbles.length === 2) {
             const [first, second] = selectedBubbles;
-
             if (first.data.pairId === second.data.pairId && first.data.type !== second.data.type) {
                 playSound("success");
-
                 setTimeout(() => {
                     first.element.classList.add("hidden");
                     second.element.classList.add("hidden");
                     selectedBubbles = [];
                     remainingPairs--;
-
                     if (remainingPairs === 0) {
                         stopTimer();
                         successMessage.style.display = "block";
@@ -347,7 +417,6 @@
                 }, 450);
             } else {
                 playSound("fail");
-
                 setTimeout(() => {
                     first.element.classList.remove("selected");
                     second.element.classList.remove("selected");
@@ -364,28 +433,21 @@
         continueBtn.style.display = "none";
         timeDisplay.textContent = "00:00";
         remainingPairs = pairsPerRound;
-
         let availableWords = wordLibrary.filter((_, idx) => !usedWordIndices.includes(idx));
-
         if (availableWords.length < pairsPerRound) {
             usedWordIndices = [];
             availableWords = [...wordLibrary];
         }
-
         const selectedWords = [];
-
         while (selectedWords.length < pairsPerRound) {
             const rndIdx = Math.floor(Math.random() * availableWords.length);
             const w = availableWords[rndIdx];
             const origIdx = wordLibrary.indexOf(w);
-
             usedWordIndices.push(origIdx);
             availableWords.splice(rndIdx, 1);
             selectedWords.push(w);
         }
-
         const bubbles = [];
-
         selectedWords.forEach((word, idx) => {
             bubbles.push({
                 text: word.cn,
@@ -400,26 +462,19 @@
                 pinyin: word.pinyin
             });
         });
-
         bubbles.sort(() => Math.random() - 0.5);
-
         bubbles.forEach(bubbleData => {
             const bubble = document.createElement("div");
             bubble.className = "bubble";
             bubble.style.backgroundColor = getRandomColor();
             bubble.textContent = bubbleData.text;
-
             bubble.addEventListener("click", () => {
                 selectBubble(bubble, bubbleData);
             });
-
             gameContainer.appendChild(bubble);
         });
     }
-
     continueBtn.addEventListener("click", generateBubbles);
-    generateBubbles();
 </script>
-
 </body>
 </html>
